@@ -1,15 +1,19 @@
-import { Button, Typography } from '@mui/material'
+import { Alert, Button, Snackbar, Typography } from '@mui/material'
 import { QuestionReview } from './QuestionReview'
 import Finished from '../assets/finished.gif'
-import { UnionQuestionType } from '../types/types'
+import { RequestState, UnionQuestionType } from '../types/types'
+import { useState } from 'react'
+import { postQuestions } from '../utils/query'
 
 export type FinishedScreenProps = {
     questions: UnionQuestionType[]
-    onSubmit: () => void
+    onFinished: () => void
 }
 
 export const FinishedScreen = (props: FinishedScreenProps) => {
-    const { questions, onSubmit } = props
+    const { questions, onFinished } = props
+    const [sendState, setSendState] = useState<RequestState>('idle')
+
     return (
         <>
             <h1>Finished!</h1>
@@ -23,10 +27,43 @@ export const FinishedScreen = (props: FinishedScreenProps) => {
                 sx={{ margin: '1rem' }}
                 variant="contained"
                 color="success"
-                onClick={onSubmit}
+                onClick={() => {
+                    postQuestions(questions).then((resState) =>
+                        setSendState(resState)
+                    )
+                }}
             >
                 Speichern
             </Button>
+            <Snackbar
+                open={sendState !== 'idle'}
+                autoHideDuration={4000}
+                onClose={() => {
+                    setSendState('idle')
+                    onFinished()
+                }}
+            >
+                <Alert
+                    onClose={() => {
+                        setSendState('idle')
+                        onFinished()
+                    }}
+                    severity={
+                        sendState === 'error'
+                            ? 'error'
+                            : sendState === 'success'
+                            ? 'success'
+                            : 'info'
+                    }
+                    sx={{ width: '100%' }}
+                >
+                    {sendState === 'success'
+                        ? 'Deine Antworten wurden erfolgreich gespeichert'
+                        : sendState === 'error'
+                        ? 'Beim Speichern deiner Antworten ist ein Fehler aufgetreten.'
+                        : null}
+                </Alert>
+            </Snackbar>
         </>
     )
 }

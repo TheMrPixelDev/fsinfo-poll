@@ -1,40 +1,44 @@
-import { Typography } from '@mui/material'
+import {
+    Box,
+    CircularProgress,
+    Grid,
+    LinearProgress,
+    Typography,
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import './App.css'
 import { RequestState, UnionQuestionType } from './types/types'
-import { getQuestions, postQuestions } from './utils/query'
 import { StartScreen } from './components/StartScreen'
 import { FinishedScreen } from './components/FinishedScreen'
 import { PollScreen } from './components/PollScreen'
 import { DirectionControls } from './components/DirectionControls'
+import { getQuestions } from './utils/querySupabase'
 
 function App() {
+    const [user, setUser] = useState<Realm.User | undefined>(undefined)
+
     const [questions, setQuestions] = useState<UnionQuestionType[]>([])
     const [currentQuestion, setCurrentQuestion] = useState<number>(-1)
     const [requestState, setRequestState] = useState<RequestState>('idle')
 
-    useEffect(() => {
-        setRequestState('pending')
-        getQuestions().then((qs) => {
-            if (qs !== undefined) {
-                console.log(qs)
-                setQuestions(qs)
-                setRequestState('success')
-            } else {
-                setRequestState('error')
-            }
-        })
-    }, [])
-
     if (requestState === 'pending') {
-        return <Typography>Fragen werden vom Server abgerufen...</Typography>
+        return (
+            <div style={{ border: '1px solid black' }}>
+                <LinearProgress />
+            </div>
+        )
     }
 
     if (requestState === 'error') {
         return (
-            <Typography>
-                Beim Laden der Fragen vom Server ist ein Fehler aufgetreten.
-            </Typography>
+            <Grid container>
+                <Grid item display="flex" justifyContent="center">
+                    <Typography>
+                        Beim Laden der Fragen vom Server ist ein Fehler
+                        aufgetreten.
+                    </Typography>
+                </Grid>
+            </Grid>
         )
     }
 
@@ -60,18 +64,20 @@ function App() {
         if (currentQuestion === questions.length) {
             return (
                 <FinishedScreen
-                    questions={questions}
-                    onSubmit={() => {
-                        postQuestions(questions)
+                    onFinished={() => {
+                        setCurrentQuestion(-1)
                     }}
+                    questions={questions}
                 />
             )
         } else {
             return (
-                <StartScreen
-                    amountOfQuestions={questions.length}
-                    onStart={() => setCurrentQuestion(0)}
-                />
+                <Box sx={{ height: '100%' }}>
+                    <StartScreen
+                        amountOfQuestions={questions.length}
+                        onStart={() => setCurrentQuestion(0)}
+                    />
+                </Box>
             )
         }
     }
