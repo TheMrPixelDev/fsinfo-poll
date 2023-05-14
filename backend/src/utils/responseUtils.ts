@@ -10,7 +10,8 @@ export const errorResponse = (response: Response, message: string) => {
   response.body = { success: false, message };
 };
 
-export const successResponse = (response: Response, message: string) => {
+export const successResponse = <T>(response: Response, content: T) => {
   response.status = 200;
-  response.body = { success: true, message };
+  response.headers.append("Content-Type", "application/json");
+  response.body = JSON.stringify(content);
 };

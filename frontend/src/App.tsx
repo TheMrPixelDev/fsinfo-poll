@@ -1,25 +1,36 @@
-import {
-    Box,
-    CircularProgress,
-    Grid,
-    LinearProgress,
-    Typography,
-} from '@mui/material'
+import { Box, Grid, LinearProgress, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import './App.css'
-import { RequestState, UnionQuestionType } from './types/types'
+import { RequestState } from './types/types'
 import { StartScreen } from './components/StartScreen'
 import { FinishedScreen } from './components/FinishedScreen'
 import { PollScreen } from './components/PollScreen'
 import { DirectionControls } from './components/DirectionControls'
-import { getQuestions } from './utils/querySupabase'
+import { Answer, Question } from '../../backend/src/model/Interfaces'
+import { getQuestions } from './utils/endpoints'
+
+let answers: Answer[] = []
 
 function App() {
-    const [user, setUser] = useState<Realm.User | undefined>(undefined)
-
-    const [questions, setQuestions] = useState<UnionQuestionType[]>([])
+    const [questions, setQuestions] = useState<Question[]>([])
     const [currentQuestion, setCurrentQuestion] = useState<number>(-1)
     const [requestState, setRequestState] = useState<RequestState>('idle')
+
+    useEffect(() => {
+        setRequestState('pending')
+        getQuestions()
+            .then((questions) => {
+                if (questions !== undefined) {
+                    setRequestState('success')
+                    setQuestions(questions)
+                } else {
+                    setRequestState('error')
+                }
+            })
+            .catch(() => {
+                setRequestState('error')
+            })
+    }, [])
 
     if (requestState === 'pending') {
         return (
@@ -52,7 +63,7 @@ function App() {
     if (question !== undefined) {
         return (
             <>
-                <PollScreen question={question} />
+                <PollScreen question={question} answers={answers} />
                 <DirectionControls
                     onBackward={() => setCurrentQuestion(currentQuestion - 1)}
                     onForward={() => setCurrentQuestion(currentQuestion + 1)}
@@ -64,6 +75,7 @@ function App() {
         if (currentQuestion === questions.length) {
             return (
                 <FinishedScreen
+                    answers={answers}
                     onFinished={() => {
                         setCurrentQuestion(-1)
                     }}

@@ -1,4 +1,4 @@
-import { UnionQuestionType } from '../types/types'
+import { Question } from '../../../backend/src/model/Interfaces'
 import {
     isMultipleChoiceQuestion,
     isSingleChoiceQuestion,
@@ -9,13 +9,11 @@ import { SingleChoiceQuestion } from './SingleChoiceQuestion'
 import { TextAnswerQuestion } from './TextAnswerQuestion'
 
 export type QuestionReviewProps = {
-    questions: UnionQuestionType[]
+    questions: Question[]
 }
 
 export const QuestionReview = (props: QuestionReviewProps) => {
     const { questions } = props
-
-    console.log(questions)
 
     return (
         <>
@@ -29,7 +27,6 @@ export const QuestionReview = (props: QuestionReviewProps) => {
                         />
                     )
                 } else if (isMultipleChoiceQuestion(question)) {
-                    console.log(question)
                     return (
                         <MultipleChoiceQuestion
                             key={idx}

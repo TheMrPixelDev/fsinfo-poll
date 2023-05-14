@@ -1,17 +1,18 @@
 import { Alert, Button, Snackbar, Typography } from '@mui/material'
 import { QuestionReview } from './QuestionReview'
 import Finished from '../assets/finished.gif'
-import { RequestState, UnionQuestionType } from '../types/types'
+import { RequestState } from '../types/types'
 import { useState } from 'react'
-import { postQuestions } from '../utils/query'
+import { Answer } from '../../../backend/src/model/Interfaces'
+import { postAnswers } from '../utils/endpoints'
 
 export type FinishedScreenProps = {
-    questions: UnionQuestionType[]
     onFinished: () => void
+    answers: Answer[]
 }
 
 export const FinishedScreen = (props: FinishedScreenProps) => {
-    const { questions, onFinished } = props
+    const { onFinished, answers } = props
     const [sendState, setSendState] = useState<RequestState>('idle')
 
     return (
@@ -20,15 +21,14 @@ export const FinishedScreen = (props: FinishedScreenProps) => {
             <img src={Finished} style={{ borderRadius: 10 }} />
             <Typography variant="body1" sx={{ margin: '2rem' }}>
                 Yey du bist fertig! Danke, dass du uns deine Meinung gesagt hast
-                :) Hier kannst du dir deine Antworten nochmal anschauen:
+                :) Willst du deine Antworten speichern?
             </Typography>
-            <QuestionReview questions={questions} />
             <Button
                 sx={{ margin: '1rem' }}
                 variant="contained"
                 color="success"
                 onClick={() => {
-                    postQuestions(questions).then((resState) =>
+                    postAnswers(answers).then((resState) =>
                         setSendState(resState)
                     )
                 }}

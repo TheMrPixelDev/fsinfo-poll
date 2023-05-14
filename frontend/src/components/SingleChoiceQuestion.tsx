@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { OptionType, SingleChoiceQuestionType } from '../types/types'
+import { Answer, Question, Option } from '../../../backend/src/model/Interfaces'
 import {
     FormControl,
     Card,
@@ -10,51 +10,56 @@ import {
 } from '@mui/material'
 
 export type SingleChoiceQuestionProps = {
-    question: SingleChoiceQuestionType
-    onSubmit?: (answer: SingleChoiceQuestionType) => void
+    question: Question
+    onSubmit?: (answer: Answer) => void
     readonly?: boolean
 }
 
 export const SingleChoiceQuestion = (props: SingleChoiceQuestionProps) => {
     const { question, readonly, onSubmit } = props
 
-    const [selectedOption, setSelectedOption] = useState<
-        OptionType | undefined
-    >(question.selectedOption)
+    const [selectedOption, setSelectedOption] = useState<Option | undefined>(
+        undefined
+    )
 
-    question.selectedOption = selectedOption
     if (onSubmit !== undefined) {
-        onSubmit(question)
+        onSubmit({
+            ofQuestion: question._id,
+            type: question.type,
+            options: selectedOption !== undefined ? [selectedOption] : [],
+        })
     }
 
     return (
         <Card variant="outlined" sx={{ padding: '1rem' }}>
             <Typography sx={{ margin: '1rem' }} variant="body1">
-                {question.question}
+                {question.text}
             </Typography>
             <FormControl>
                 <RadioGroup>
-                    {question.options.map((option, idx) => {
-                        return (
-                            <FormControlLabel
-                                disabled={readonly}
-                                key={idx}
-                                value={option.value}
-                                control={
-                                    <Radio
-                                        readOnly={readonly}
-                                        onChange={(event) => {
-                                            if (event.target.checked) {
-                                                setSelectedOption(option)
-                                            }
-                                        }}
-                                    />
-                                }
-                                checked={selectedOption === option}
-                                label={option.label}
-                            />
-                        )
-                    })}
+                    {question.options !== undefined
+                        ? question.options.map((option, idx) => {
+                              return (
+                                  <FormControlLabel
+                                      disabled={readonly}
+                                      key={idx}
+                                      value={option.value}
+                                      control={
+                                          <Radio
+                                              readOnly={readonly}
+                                              onChange={(event) => {
+                                                  if (event.target.checked) {
+                                                      setSelectedOption(option)
+                                                  }
+                                              }}
+                                          />
+                                      }
+                                      checked={selectedOption === option}
+                                      label={option.value}
+                                  />
+                              )
+                          })
+                        : null}
                 </RadioGroup>
             </FormControl>
         </Card>
