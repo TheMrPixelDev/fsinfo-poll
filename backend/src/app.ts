@@ -13,4 +13,4 @@ app.use(questionsRouter.allowedMethods());
 app.use(answersRouter.routes());
 app.use(questionsRouter.allowedMethods());
 
-app.listen({ port: 7695, hostname: "127.0.0.1" });
+app.listen({ port: 8000, hostname: "127.0.0.1" });

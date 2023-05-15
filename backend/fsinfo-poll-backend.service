@@ -1,0 +1,9 @@
+[Unit]
+Description=Backend des FSinfo Umfragetools
+After=network.target
+
+[Service]
+ExecStart=deno run --allow-read --allow-write --allow-sys --allow-net --allow-env /home/pxldev/fsinfo-poll/backend/src/app.ts
+
+[Install]
+WantedBy=multi-user.target

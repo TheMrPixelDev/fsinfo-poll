@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    container_name: fsinfo-poll
+    image: fsinfo-poll
+    ports:
+      - "8000:8000"
