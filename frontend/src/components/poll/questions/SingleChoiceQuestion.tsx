@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Answer, Question, Option } from '../../../backend/src/model/Interfaces'
+import { useEffect, useState } from 'react'
+import { Option } from '../../../../../backend/src/model/Interfaces'
 import {
     FormControl,
     Card,
@@ -8,30 +8,30 @@ import {
     FormControlLabel,
     Radio,
 } from '@mui/material'
+import { QuestionComponentProps } from '../../../types/props'
 
-export type SingleChoiceQuestionProps = {
-    question: Question
-    onSubmit?: (answer: Answer) => void
-    readonly?: boolean
-}
+export type SingleChoiceQuestionProps = {} & QuestionComponentProps
 
 export const SingleChoiceQuestion = (props: SingleChoiceQuestionProps) => {
-    const { question, readonly, onSubmit } = props
+    const { question, readonly, onAnswerChange } = props
 
     const [selectedOption, setSelectedOption] = useState<Option | undefined>(
         undefined
     )
 
-    if (onSubmit !== undefined) {
-        onSubmit({
-            ofQuestion: question._id,
-            type: question.type,
-            options: selectedOption !== undefined ? [selectedOption] : [],
-        })
-    }
+    useEffect(() => {
+        if (onAnswerChange !== undefined) {
+            console.log('Single Choice Answer changed')
+            onAnswerChange({
+                ofQuestion: question._id,
+                type: question.type,
+                options: selectedOption !== undefined ? [selectedOption] : [],
+            })
+        }
+    }, [selectedOption])
 
     return (
-        <Card variant="outlined" sx={{ padding: '1rem' }}>
+        <Card variant="elevation">
             <Typography sx={{ margin: '1rem' }} variant="body1">
                 {question.text}
             </Typography>

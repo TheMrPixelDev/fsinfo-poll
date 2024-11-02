@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     Typography,
     Card,
@@ -6,29 +6,27 @@ import {
     FormControlLabel,
     Checkbox,
 } from '@mui/material'
-import { Answer, Option, Question } from '../../../backend/src/model/Interfaces'
+import { Answer, Option } from '../../../../../backend/src/model/Interfaces'
+import { QuestionComponentProps } from '../../../types/props'
 
-export type MultipleChoiceQuestionProps = {
-    question: Question
-    onSubmit?: (answer: Answer) => void
-    readonly?: boolean
-}
+export type MultipleChoiceQuestionProps = {} & QuestionComponentProps
 
 export const MultipleChoiceQuestion = (props: MultipleChoiceQuestionProps) => {
-    const { question, readonly, onSubmit } = props
+    const { question, readonly, onAnswerChange } = props
 
     const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
 
-    if (!readonly) {
-        if (onSubmit !== undefined) {
-            const answer: Answer = {
+    useEffect(() => {
+        if (onAnswerChange !== undefined) {
+            console.log('Multiple Choice Answer changed')
+            const newAnswer: Answer = {
                 ofQuestion: question._id,
                 type: question.type,
                 options: selectedOptions,
             }
-            onSubmit(answer)
+            onAnswerChange(newAnswer)
         }
-    }
+    }, [selectedOptions])
 
     return (
         <Card variant="outlined" sx={{ padding: '1rem' }}>

@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material";
 
 const PRIMARY_FS_COLOR = "#000080";
 
-export const theme = createTheme({
+const theme = createTheme({
   palette: {
     primary: { main: PRIMARY_FS_COLOR },
     background: { default: "grey" },
@@ -24,3 +24,5 @@ export const theme = createTheme({
     },
   },
 });
+
+export default theme;

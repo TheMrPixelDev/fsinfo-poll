@@ -1,0 +1,1 @@
+deno run --allow-net --allow-read --allow-write --allow-sys --allow-env src/app.ts

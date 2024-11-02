@@ -15,10 +15,10 @@ import {
     Option,
     Question,
     QuestionAnswerType,
-} from '../../../backend/src/model/Interfaces'
+} from '../../../../backend/src/model/Interfaces'
 import { useEffect, useReducer, useState } from 'react'
 import { AddOptionBox } from './AddOptionsBox'
-import { useQuestions } from '../hooks/useQuestions'
+import { useQuestions } from '../../hooks/useQuestions'
 
 function isQuestionAnswerType(value: string): value is QuestionAnswerType {
     return (

@@ -1,19 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Question } from "../../../backend/src/model/Interfaces";
 import {
   addQuestion,
   deleteQuestion,
   getQuestions,
   updateQuestion,
 } from "../utils/endpoints";
+import { Question } from "../../../backend/src/model/Interfaces";
 
-export function useQuestions() {
-  const querieClient = useQueryClient();
-
-  const questions = useQuery<Question[] | undefined>({
+export const useQuestions = () => {
+  const { data, status, error } = useQuery<Question[] | undefined>({
     queryKey: ["questions"],
     queryFn: getQuestions,
   });
+
+  const querieClient = useQueryClient();
 
   const deleteQuestionMutation = useMutation({
     mutationFn: async (questionId: string) => {
@@ -56,9 +56,11 @@ export function useQuestions() {
   });
 
   return {
-    questions,
-    addQuestionMutation,
-    deleteQuestionMutation,
     updateQuestionMutation,
+    deleteQuestionMutation,
+    addQuestionMutation,
+    data,
+    status,
+    error,
   };
-}
+};

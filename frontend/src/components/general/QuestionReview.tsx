@@ -1,12 +1,12 @@
-import { Question } from '../../../backend/src/model/Interfaces'
+import { Question } from '../../../../backend/src/model/Interfaces'
 import {
-    isMultipleChoiceQuestion,
     isSingleChoiceQuestion,
+    isMultipleChoiceQuestion,
     isTextAnswerQuestion,
-} from '../utils/guards'
-import { MultipleChoiceQuestion } from './MultipleChoiceQuestion'
-import { SingleChoiceQuestion } from './SingleChoiceQuestion'
-import { TextAnswerQuestion } from './TextAnswerQuestion'
+} from '../../utils/guards'
+import { SingleChoiceQuestion } from '../poll/questions/SingleChoiceQuestion'
+import { TextAnswerQuestion } from '../poll/questions/TextAnswerQuestion'
+import { MultipleChoiceQuestion } from '../poll/questions/MultipleChoiceQuestion'
 
 export type QuestionReviewProps = {
     questions: Question[]

@@ -9,7 +9,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { Option } from '../../../backend/src/model/Interfaces'
+import { Option } from '../../../../backend/src/model/Interfaces'
 import { useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete'
 

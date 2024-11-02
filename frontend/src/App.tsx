@@ -1,98 +1,54 @@
-import { Box, Grid, LinearProgress, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
-import './App.css'
-import { RequestState } from './types/types'
-import { StartScreen } from './components/StartScreen'
-import { FinishedScreen } from './components/FinishedScreen'
-import { PollScreen } from './components/PollScreen'
-import { DirectionControls } from './components/DirectionControls'
+import { useState } from 'react'
 import { Answer, Question } from '../../backend/src/model/Interfaces'
-import { getQuestions } from './utils/endpoints'
+import {
+    AnswerContext,
+    NotificationContext,
+    QuestionContext,
+} from './hooks/contexts'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Poll } from './components/poll/Poll'
+import { StartScreen } from './components/general/StartScreen'
+import { Admin } from './components/admin/Admin'
+import { Alert, Snackbar } from '@mui/material'
+import { Notification } from './types/types'
 
-let answers: Answer[] = []
-
-function App() {
+const App = () => {
+    const [answers, setAnswers] = useState<Answer[]>([])
     const [questions, setQuestions] = useState<Question[]>([])
-    const [currentQuestion, setCurrentQuestion] = useState<number>(-1)
-    const [requestState, setRequestState] = useState<RequestState>('idle')
+    const [notification, setNotification] = useState<Notification | undefined>(
+        undefined
+    )
 
-    useEffect(() => {
-        setRequestState('pending')
-        getQuestions()
-            .then((questions) => {
-                if (questions !== undefined) {
-                    setRequestState('success')
-                    setQuestions(questions)
-                } else {
-                    setRequestState('error')
-                }
-            })
-            .catch(() => {
-                setRequestState('error')
-            })
-    }, [])
-
-    if (requestState === 'pending') {
-        return (
-            <div style={{ border: '1px solid black' }}>
-                <LinearProgress />
-            </div>
-        )
-    }
-
-    if (requestState === 'error') {
-        return (
-            <Grid container>
-                <Grid item display="flex" justifyContent="center">
-                    <Typography>
-                        Beim Laden der Fragen vom Server ist ein Fehler
-                        aufgetreten.
-                    </Typography>
-                </Grid>
-            </Grid>
-        )
-    }
-
-    const question =
-        currentQuestion >= 0 &&
-        currentQuestion < questions.length &&
-        currentQuestion >= 0
-            ? questions[currentQuestion]
-            : undefined
-
-    if (question !== undefined) {
-        return (
-            <>
-                <PollScreen question={question} answers={answers} />
-                <DirectionControls
-                    onBackward={() => setCurrentQuestion(currentQuestion - 1)}
-                    onForward={() => setCurrentQuestion(currentQuestion + 1)}
-                />
-                <p className="read-the-docs">FSinfo Umfrage Tool</p>
-            </>
-        )
-    } else {
-        if (currentQuestion === questions.length) {
-            return (
-                <FinishedScreen
-                    answers={answers}
-                    onFinished={() => {
-                        setCurrentQuestion(-1)
-                    }}
-                    questions={questions}
-                />
-            )
-        } else {
-            return (
-                <Box sx={{ height: '100%' }}>
-                    <StartScreen
-                        amountOfQuestions={questions.length}
-                        onStart={() => setCurrentQuestion(0)}
-                    />
-                </Box>
-            )
-        }
-    }
+    return (
+        <>
+            <AnswerContext.Provider value={{ answers, setAnswers }}>
+                <QuestionContext.Provider value={{ questions, setQuestions }}>
+                    <NotificationContext.Provider
+                        value={{ notification, setNotification }}
+                    >
+                        <BrowserRouter>
+                            <Routes>
+                                <Route path="/" element={<Poll />} />
+                                <Route path="/poll" element={<Poll />} />
+                                <Route path="/admin" element={<Admin />} />
+                            </Routes>
+                        </BrowserRouter>
+                        <Snackbar
+                            open={notification !== undefined}
+                            autoHideDuration={2000}
+                            onClose={() => setNotification(undefined)}
+                        >
+                            <Alert variant="filled" color={notification?.color}>
+                                {notification?.text}
+                            </Alert>
+                        </Snackbar>
+                        <ReactQueryDevtools initialIsOpen={true} />
+                    </NotificationContext.Provider>
+                </QuestionContext.Provider>
+            </AnswerContext.Provider>
+        </>
+    )
 }
 
 export default App

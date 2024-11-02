@@ -1,26 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TextField, Card, Typography } from '@mui/material'
-import { Answer, Question } from '../../../backend/src/model/Interfaces'
+import { Answer } from '../../../../../backend/src/model/Interfaces'
+import { QuestionComponentProps } from '../../../types/props'
 
-export type TextAnswerQuestionProps = {
-    question: Question
-    onSubmit?: (answer: Answer) => void
-    readonly?: boolean
-}
+export type TextAnswerQuestionProps = {} & QuestionComponentProps
 
 export const TextAnswerQuestion = (props: TextAnswerQuestionProps) => {
-    const { question, readonly, onSubmit } = props
+    const { question, readonly, onAnswerChange } = props
 
     const [answerText, setAnswerText] = useState<string>('')
 
-    if (onSubmit !== undefined) {
-        const answer: Answer = {
-            ofQuestion: question._id,
-            type: question.type,
-            text: answerText,
+    useEffect(() => {
+        if (onAnswerChange !== undefined) {
+            console.log('Text Question Answer changed')
+            const answer: Answer = {
+                ofQuestion: question._id,
+                type: question.type,
+                text: answerText,
+            }
+            onAnswerChange(answer)
         }
-        onSubmit(answer)
-    }
+    }, [answerText])
 
     return (
         <Card variant="outlined" sx={{ padding: '1rem' }}>

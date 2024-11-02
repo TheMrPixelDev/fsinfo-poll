@@ -9,14 +9,17 @@ export const router = new Router();
 
 const password = Deno.env.get("MONGO_PASSWORD");
 const username = Deno.env.get("MONGO_USERNAME");
+const mongoUrl = Deno.env.get("MONGO_URL");
 
 const env = await load();
 const localEnvPassword = env["MONGO_PASSWORD"];
 const localEnvUsername = env["MONGO_USERNAME"];
+const localMongoUrl = env["MONGO_URL"];
 
 const database = new Database(
   username !== undefined ? username : localEnvUsername,
   password !== undefined ? password : localEnvPassword,
+  mongoUrl !== undefined ? mongoUrl : localMongoUrl,
 );
 
 router.get("/questions", async (ctx) => {

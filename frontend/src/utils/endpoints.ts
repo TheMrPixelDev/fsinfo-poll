@@ -1,6 +1,7 @@
 import { Answer, Question } from "../../../backend/src/model/Interfaces";
 
-const endpointUrl = "http://localhost:7695";
+const endpointUrl = "http://localhost:8000";
+//const endpointUrl = "https://fsinfo-poll.pxldeveloper.eu";
 
 export async function getQuestions() {
   const res = await fetch(endpointUrl + "/questions");
@@ -41,6 +42,7 @@ export async function deleteQuestion(questionId: string) {
 
 export async function postAnswers(answers: Answer[]) {
   const res = await fetch(endpointUrl + "/answers", {
+    method: "POST",
     body: JSON.stringify(answers),
     headers: {
       "Content-Type": "application/json",
@@ -50,6 +52,8 @@ export async function postAnswers(answers: Answer[]) {
   if (res.ok) {
     const successResponse = await res.json();
     return successResponse;
+  } else {
+    Promise.reject();
   }
 }
 

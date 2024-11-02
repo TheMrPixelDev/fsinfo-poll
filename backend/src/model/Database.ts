@@ -7,12 +7,13 @@ export default class Database {
   public constructor(
     username: string | undefined,
     password: string | undefined,
+    databaseUrl: string | undefined,
   ) {
     if (username === undefined || password === undefined) {
       throw Error("No credentials provided for MongoDB");
     }
     const connectionString =
-      `mongodb+srv://${username}:${password}@fsinfopoll.qj9glmq.mongodb.net/?retryWrites=true&w=majority`;
+      `mongodb+srv://${username}:${password}@${databaseUrl}`;
     console.log(connectionString);
     this.client = new MongoClient(connectionString);
     this.client.connect();
